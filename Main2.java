@@ -1,8 +1,12 @@
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main2 {
+
+    private static final Lock lock = new ReentrantLock();
 
     public static void sequentialCopy(String sourcePath, String destinationPath) {
         try (FileReader reader = new FileReader(sourcePath);
@@ -23,7 +27,9 @@ public class Main2 {
                  FileWriter writer = new FileWriter(destinationPath)) {
                 int character;
                 while ((character = reader.read()) != -1) {
+                    lock.lock();
                     writer.write(character);
+                    lock.unlock();
                 }
                 System.out.println("Параллельное завершено успешно!");
             } catch (IOException e) {
